@@ -1,0 +1,60 @@
+---
+# tasks file for ossec-server
+- name: Install ossec server required packages for compilation
+  yum: state=latest name={{ item }}
+  with_items:
+    - epel-release
+
+- name: Install xmlstarlet
+  yum: state=latest name=xmlstarlet
+
+- name: Download atomic repository
+  get_url: 
+    url: http://www.atomicorp.com/installers/atomic 
+    mode: u+rwx
+    dest: /tmp/atomic-repo-installer.sh
+
+- name: Install atomic repository
+  command: /tmp/atomic-repo-installer.sh
+  environment:
+    NON_INT: 1
+  register: command_result
+  failed_when: "'Error' in command_result.stderr"
+# da verificare l'effettivo messaggio di errore quando fallisce
+# il comando manuale: wget -q -O - http://www.atomicorp.com/installers/atomic | sh
+# impostando export NON_INT=1 non vengono fatte le domande
+
+- name: Install ossec-hids-server
+  yum: pkg={{ item }}
+       state=present
+  with_items:
+    - ossec-hids
+    - ossec-hids-server
+
+- name: delete comment line with xml syntax error in ossec.conf
+  lineinfile:
+    dest: /var/ossec/etc/ossec.conf
+    state: absent
+    regexp: '^ *<!-- Frequency'
+# Attenzione dalla versione 2.3 e' stato cambiato il parametro dest a path
+
+
+
+- name: Change ossec mail from
+  command: "xmlstarlet edit --inplace --omit-decl --update '/ossec_config/global/email_notification' --value '{{ ossec_email_notification }}' /var/ossec/etc/ossec.conf"
+
+- name: Change ossec mail to
+  command: "xmlstarlet edit --inplace --omit-decl --update '/ossec_config/global/email_to' --value '{{ ossec_email_to }}' /var/ossec/etc/ossec.conf"
+
+
+- name: Change ossec mail from
+  command: "xmlstarlet edit --inplace --omit-decl --update '/ossec_config/global/smtp_server' --value '{{ ossec_smtp_server }}' /var/ossec/etc/ossec.conf"
+
+
+- name: Change ossec mail from
+  command: "xmlstarlet edit --inplace --omit-decl --update '/ossec_config/alerts/email_alert_level' --value '{{ ossec_email_alert_level }}' /var/ossec/etc/ossec.conf"
+
+- name: Change ossec mail from
+  command: "xmlstarlet edit --inplace --omit-decl --update '/ossec_config/global/email_from' --value '{{ ossec_email_from }}' /var/ossec/etc/ossec.conf"
+  notify: restart ossec
+
