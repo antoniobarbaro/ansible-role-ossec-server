@@ -78,6 +78,12 @@
     xpath: /ossec_config/active-response[command="firewall-drop"]/disabled
     value: '{{ ossec_active_response_disabled }}'
 
+- name: Change ossec json output
+  xml:
+    path: /var/ossec/etc/ossec.conf
+    xpath: /ossec_config/global/jsonout_output
+    value: '{{ ossec_jsonout_output }}'
+
 - name: remove xml header
   lineinfile:
     dest: /var/ossec/etc/ossec.conf
