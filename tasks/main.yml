@@ -4,9 +4,7 @@
   yum: state=latest name={{ item }}
   with_items:
     - epel-release
-
-- name: Install xmlstarlet
-  yum: state=latest name=xmlstarlet
+    - python-lxml
 
 - name: Download atomic repository
   get_url: 
@@ -38,23 +36,51 @@
     regexp: '^ *<!-- Frequency'
 # Attenzione dalla versione 2.3 e' stato cambiato il parametro dest a path
 
-
-
-- name: Change ossec mail from
-  command: "xmlstarlet edit --inplace --omit-decl --update '/ossec_config/global/email_notification' --value '{{ ossec_email_notification }}' /var/ossec/etc/ossec.conf"
+- name: Change ossec mail notification enable or disable
+  xml:
+    path: /var/ossec/etc/ossec.conf
+    xpath: /ossec_config/global/email_notification
+    value: '{{ ossec_email_notification }}'
 
 - name: Change ossec mail to
-  command: "xmlstarlet edit --inplace --omit-decl --update '/ossec_config/global/email_to' --value '{{ ossec_email_to }}' /var/ossec/etc/ossec.conf"
+  xml:
+    path: /var/ossec/etc/ossec.conf
+    xpath: /ossec_config/global/email_to
+    value: '{{ ossec_email_to }}'
 
+- name: Change ossec smtp server
+  xml:
+    path: /var/ossec/etc/ossec.conf
+    xpath: /ossec_config/global/smtp_server
+    value: '{{ ossec_smtp_server }}'
+
+- name: Change ossec mail alert level
+  xml:
+    path: /var/ossec/etc/ossec.conf
+    xpath: /ossec_config/alerts/email_alert_level
+    value: '{{ ossec_email_alert_level }}'
 
 - name: Change ossec mail from
-  command: "xmlstarlet edit --inplace --omit-decl --update '/ossec_config/global/smtp_server' --value '{{ ossec_smtp_server }}' /var/ossec/etc/ossec.conf"
+  xml:
+    path: /var/ossec/etc/ossec.conf
+    xpath: /ossec_config/global/email_from
+    value: '{{ ossec_email_from }}'
 
+- name: Change ossec active response host-deny
+  xml:
+    path: /var/ossec/etc/ossec.conf
+    xpath: /ossec_config/active-response[command="host-deny"]/disabled
+    value: '{{ ossec_active_response_disabled }}'
 
-- name: Change ossec mail from
-  command: "xmlstarlet edit --inplace --omit-decl --update '/ossec_config/alerts/email_alert_level' --value '{{ ossec_email_alert_level }}' /var/ossec/etc/ossec.conf"
+- name: Change ossec active response firewall-drop
+  xml:
+    path: /var/ossec/etc/ossec.conf
+    xpath: /ossec_config/active-response[command="firewall-drop"]/disabled
+    value: '{{ ossec_active_response_disabled }}'
 
-- name: Change ossec mail from
-  command: "xmlstarlet edit --inplace --omit-decl --update '/ossec_config/global/email_from' --value '{{ ossec_email_from }}' /var/ossec/etc/ossec.conf"
+- name: remove xml header
+  lineinfile:
+    dest: /var/ossec/etc/ossec.conf
+    state: absent
+    regexp: '^<\?xml'
   notify: restart ossec
-
