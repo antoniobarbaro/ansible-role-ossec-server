@@ -90,3 +90,28 @@
     state: absent
     regexp: '^<\?xml'
   notify: restart ossec
+
+- name: firewall enable port 1514 for ossec
+  firewalld:
+    port: 1514/udp
+    permanent: true
+    state: enabled    
+
+- name: firewall enable port 514 for syslog tcp
+  firewalld:
+    port: 514/tcp
+    permanent: true
+    state: enabled   
+
+- name: firewall enable port 514 for syslog udp
+  firewalld:
+    port: 514/udp
+    permanent: true
+    state: enabled        
+
+- name: firewall enable port 1515 for ossec-authd
+  firewalld:
+    port: 1515/tcp
+    permanent: true
+    state: enabled   
+    
