@@ -6,28 +6,28 @@
     - epel-release
     - python-lxml
 
-#- name: Download atomic repository
-#  get_url: 
-#    url: http://www.atomicorp.com/installers/atomic 
-#    mode: u+rwx
-#    dest: /tmp/atomic-repo-installer.sh
+- name: Download atomic repository
+  get_url: 
+    url: http://www.atomicorp.com/installers/atomic 
+    mode: u+rwx
+    dest: /tmp/atomic-repo-installer.sh
 
-#- name: Install atomic repository
-#  command: /tmp/atomic-repo-installer.sh
-#  environment:
-#    NON_INT: 1
-#  register: command_result
-#  failed_when: "'Error' in command_result.stderr"
+- name: Install atomic repository
+  command: /tmp/atomic-repo-installer.sh
+  environment:
+    NON_INT: 1
+  register: command_result
+  failed_when: "'Error' in command_result.stderr"
 # da verificare l'effettivo messaggio di errore quando fallisce
 # il comando manuale: wget -q -O - http://www.atomicorp.com/installers/atomic | sh
 # impostando export NON_INT=1 non vengono fatte le domande
 
-- name: Install ossec-hids-server
-  yum: name={{ item }}
-       state=present
-  with_items:
-    - http://updates.atomicorp.com/channels/ossec/centos/7/x86_64/RPMS/ossec-hids-2.9.0-49.el7.art.x86_64.rpm
-    - http://updates.atomicorp.com/channels/ossec/centos/7/x86_64/RPMS/ossec-hids-server-2.9.0-49.el7.art.x86_64.rpm
+#- name: Install ossec-hids-server
+#  yum: name={{ item }}
+#       state=present
+#  with_items:
+#    - http://updates.atomicorp.com/channels/ossec/centos/7/x86_64/RPMS/ossec-hids-2.9.0-49.el7.art.x86_64.rpm
+#    - http://updates.atomicorp.com/channels/ossec/centos/7/x86_64/RPMS/ossec-hids-server-2.9.0-49.el7.art.x86_64.rpm
 
 - name: delete comment line with xml syntax error in ossec.conf
   lineinfile:
