@@ -5,6 +5,7 @@
   with_items:
     - epel-release
     - python-lxml
+    - wget
 
 - name: Download atomic repository
   get_url: 
@@ -22,12 +23,21 @@
 # il comando manuale: wget -q -O - http://www.atomicorp.com/installers/atomic | sh
 # impostando export NON_INT=1 non vengono fatte le domande
 
-- name: Install ossec-hids-server
+- name: Install or upgrade ossec-hids-server
   yum: name={{ item }}
        state=latest
   with_items:
     - ossec-hids
     - ossec-hids-server
+  when: ossec_upgrade
+
+- name: Install ossec-hids-server
+  yum: name={{ item }}
+       state=present
+  with_items:
+    - ossec-hids
+    - ossec-hids-server
+  when: not ossec_upgrade
 
 - name: delete comment line with xml syntax error in ossec.conf
   lineinfile:
@@ -89,7 +99,7 @@
     dest: /var/ossec/etc/ossec.conf
     state: absent
     regexp: '^<\?xml'
-  notify: restart ossec
+#  notify: restart ossec
 
 - name: firewall enable port 1514 for ossec
   firewalld:

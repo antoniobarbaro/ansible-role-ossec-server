@@ -1,5 +1,5 @@
 ---
-# defaults file for ossec-wazuh
+# defaults file for ossec-server
 #
 ossec_email_notification: 'yes'
 ossec_email_to: antonio.barbaro@gmail.com
@@ -8,3 +8,4 @@ ossec_email_from: ossec@smartblot.com
 ossec_email_alert_level: 8
 ossec_active_response_disabled: 'yes'
 ossec_jsonout_output : 'yes'
+ossec_upgrade : no
