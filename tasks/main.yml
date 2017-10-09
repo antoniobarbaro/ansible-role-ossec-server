@@ -6,6 +6,7 @@
     - epel-release
     - python-lxml
     - wget
+    - firewalld
 
 - name: Download atomic repository
   get_url: 
@@ -23,21 +24,41 @@
 # il comando manuale: wget -q -O - http://www.atomicorp.com/installers/atomic | sh
 # impostando export NON_INT=1 non vengono fatte le domande
 
-- name: Install or upgrade ossec-hids-server
-  yum: name={{ item }}
-       state=latest
-  with_items:
-    - ossec-hids
-    - ossec-hids-server
-  when: ossec_upgrade
+#- name: Install or upgrade ossec-hids-server
+#  yum: name={{ item }}
+#       state=latest
+#  with_items:
+#    - ossec-hids
+#    - ossec-hids-server
+#  when: ossec_upgrade
 
-- name: Install ossec-hids-server
-  yum: name={{ item }}
-       state=present
-  with_items:
-    - ossec-hids
-    - ossec-hids-server
-  when: not ossec_upgrade
+#- name: Install ossec-hids-server
+#  yum: name={{ item }}
+#       state=present
+#  with_items:
+#    - ossec-hids
+#    - ossec-hids-server
+#  when: not ossec_upgrade
+
+- name: copy file hids-ossec
+  copy:
+    src: files/ossec-hids-2.9.1-1764.el7.art.x86_64.rpm
+    dest: /tmp/ossec-hids-2.9.1-1764.el7.art.x86_64.rpm
+
+- name: copy file hids-ossec-server
+  copy:
+    src: files/ossec-hids-server-2.9.1-1764.el7.art.x86_64.rpm
+    dest: /tmp/ossec-hids-server-2.9.1-1764.el7.art.x86_64.rpm
+
+- name: install hids-ossec
+  yum:
+    name: /tmp/ossec-hids-2.9.1-1764.el7.art.x86_64.rpm
+    state: present
+
+- name: install hids-ossec-server
+  yum:
+    name: /tmp/ossec-hids-server-2.9.1-1764.el7.art.x86_64.rpm
+    state: present
 
 - name: delete comment line with xml syntax error in ossec.conf
   lineinfile:
