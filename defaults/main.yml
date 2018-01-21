@@ -9,3 +9,4 @@ ossec_email_alert_level: 8
 ossec_active_response_disabled: 'yes'
 ossec_jsonout_output : 'yes'
 ossec_upgrade : no
+ossec_install_atomic_repo: 'false'
