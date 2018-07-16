@@ -124,6 +124,21 @@
     regexp: '^<\?xml'
 #  notify: restart ossec
 
+
+- name: disable ossec rids
+  lineinfile:
+    path: /var/ossec/etc/internal_options.conf
+    regexp: '^remoted.verify_msg_id'
+    line: 'remoted.verify_msg_id=0'
+  when: ossec_disable_rids == 'true'
+
+- name: enable ossec rids
+  lineinfile:
+    path: /var/ossec/etc/internal_options.conf
+    regexp: '^remoted.verify_msg_id'
+    line: 'remoted.verify_msg_id=1'
+  when: ossec_disable_rids == 'false'
+
 - name: firewall enable port 1514 for ossec
   firewalld:
     port: 1514/udp
