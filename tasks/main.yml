@@ -52,6 +52,11 @@
     src: files/ossec-hids-server-2.9.1-1764.el7.art.x86_64.rpm
     dest: /tmp/ossec-hids-server-2.9.1-1764.el7.art.x86_64.rpm
 
+- name: copy file hids-ossec-mysql
+  copy:
+    src: files/ossec-hids-mysql-2.9.1-1764.el7.art.x86_64.rpm
+    dest: /tmp/ossec-hids-mysql-2.9.1-1764.el7.art.x86_64.rpm
+
 - name: install hids-ossec
   yum:
     name: /tmp/ossec-hids-2.9.1-1764.el7.art.x86_64.rpm
@@ -61,6 +66,11 @@
   yum:
     name: /tmp/ossec-hids-server-2.9.1-1764.el7.art.x86_64.rpm
     state: present
+
+- name: install hids-ossec-mysql
+  yum:
+    name: /tmp/ossec-hids-mysql-2.9.1-1764.el7.art.x86_64.rpm
+    state: present    
 
 - name: delete comment line with xml syntax error in ossec.conf
   lineinfile:
