@@ -42,6 +42,12 @@
 #    - ossec-hids-server
 #  when: not ossec_upgrade
 
+- name: delete atomic repo
+  file:
+    path: /etc/yum.repos.d/atomic.repo
+    state: absent
+  when: not ossec_install_atomic_repo
+
 - name: copy file hids-ossec
   copy:
     src: files/ossec-hids-2.9.1-1764.el7.art.x86_64.rpm
