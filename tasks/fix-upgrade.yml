@@ -1,0 +1,52 @@
+- name: check file internal_options.conf.rpmnew exists
+  stat:
+    path: /var/ossec/etc/internal_options.conf.rpmnew
+  register: ossec_internal_rpmnew
+
+- name: backup old internal options in temp
+  copy:
+    remote_src: yes
+    src: /var/ossec/etc/internal_options.conf
+    dest: /tmp/internal_options.conf.old
+  when: ossec_internal_rpmnew.stat.exists
+
+- name: move new internal options 
+  copy:
+    remote_src: yes
+    src: /var/ossec/etc/internal_options.conf.rpmnew
+    dest: /var/ossec/etc/internal_options.conf
+  when: ossec_internal_rpmnew.stat.exists
+
+- name: delete new internal options 
+  file:
+    path: /var/ossec/etc/internal_options.conf.rpmnew
+    state: absent
+  when: ossec_internal_rpmnew.stat.exists
+
+# ---------------
+
+- name: check file ossec-server.conf.rpmnew exists
+  stat:
+    path: /var/ossec/etc/ossec-server.conf.rpmnew
+  register: ossec_server_rpmnew
+
+- name: backup old ossec server in temp
+  copy:
+    remote_src: yes
+    src: /var/ossec/etc/ossec-server.conf
+    dest: /tmp/ossec-server.conf.old
+  when: ossec_server_rpmnew.stat.exists
+
+- name: move new ossec server conf
+  copy:
+    remote_src: yes
+    src: /var/ossec/etc/ossec-server.conf.rpmnew
+    dest: /var/ossec/etc/ossec-server.conf
+  when: ossec_server_rpmnew.stat.exists
+
+- name: delete new ossec server conf
+  file:
+    path: /var/ossec/etc/ossec-server.conf.rpmnew
+    state: absent
+  when: ossec_server_rpmnew.stat.exists
+

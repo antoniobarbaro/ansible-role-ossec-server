@@ -11,3 +11,4 @@ ossec_jsonout_output : 'yes'
 ossec_upgrade : no
 ossec_install_atomic_repo: false
 ossec_disable_rids: 'true'
+ossec_version: '2.9.1-1764'

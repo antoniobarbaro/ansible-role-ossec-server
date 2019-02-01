@@ -50,33 +50,29 @@
 
 - name: copy file hids-ossec
   copy:
-    src: files/ossec-hids-2.9.1-1764.el7.art.x86_64.rpm
-    dest: /tmp/ossec-hids-2.9.1-1764.el7.art.x86_64.rpm
+    src: 'files/ossec-hids-{{ ossec_version }}.el7.art.x86_64.rpm'
+    dest: '/tmp/ossec-hids-{{ ossec_version }}.el7.art.x86_64.rpm'
 
 - name: copy file hids-ossec-server
   copy:
-    src: files/ossec-hids-server-2.9.1-1764.el7.art.x86_64.rpm
-    dest: /tmp/ossec-hids-server-2.9.1-1764.el7.art.x86_64.rpm
+    src: 'files/ossec-hids-server-{{ ossec_version }}.el7.art.x86_64.rpm'
+    dest: '/tmp/ossec-hids-server-{{ ossec_version }}.el7.art.x86_64.rpm'
 
 - name: copy file hids-ossec-mysql
   copy:
-    src: files/ossec-hids-mysql-2.9.1-1764.el7.art.x86_64.rpm
-    dest: /tmp/ossec-hids-mysql-2.9.1-1764.el7.art.x86_64.rpm
+    src: 'files/ossec-hids-mysql-{{ ossec_version }}.el7.art.x86_64.rpm'
+    dest: '/tmp/ossec-hids-mysql-{{ ossec_version }}.el7.art.x86_64.rpm'
 
-- name: install hids-ossec
+- name: install hids ossec
   yum:
-    name: /tmp/ossec-hids-2.9.1-1764.el7.art.x86_64.rpm
-    state: present
-
-- name: install hids-ossec-server
-  yum:
-    name: /tmp/ossec-hids-server-2.9.1-1764.el7.art.x86_64.rpm
-    state: present
-
-- name: install hids-ossec-mysql
-  yum:
-    name: /tmp/ossec-hids-mysql-2.9.1-1764.el7.art.x86_64.rpm
+    name: 
+      - '/tmp/ossec-hids-{{ ossec_version }}.el7.art.x86_64.rpm'
+      - '/tmp/ossec-hids-server-{{ ossec_version }}.el7.art.x86_64.rpm'
+      - '/tmp/ossec-hids-mysql-{{ ossec_version }}.el7.art.x86_64.rpm'
     state: present    
+
+- name: fix upgrade version
+  include: fix-upgrade.yml
 
 - name: delete comment line with xml syntax error in ossec.conf
   lineinfile:
@@ -120,12 +116,14 @@
     path: /var/ossec/etc/ossec.conf
     xpath: /ossec_config/active-response[command="host-deny"]/disabled
     value: '{{ ossec_active_response_disabled }}'
+  when: ossec_version == '2.9.1-1764'
 
 - name: Change ossec active response firewall-drop
   xml:
     path: /var/ossec/etc/ossec.conf
     xpath: /ossec_config/active-response[command="firewall-drop"]/disabled
     value: '{{ ossec_active_response_disabled }}'
+  when: ossec_version == '2.9.1-1764'
 
 - name: Change ossec json output
   xml:
